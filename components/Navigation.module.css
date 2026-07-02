@@ -1,0 +1,136 @@
+.nav, .nav_alt {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  /* z-index: 101; */
+  width: 140px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: black;
+  opacity: 0.5;
+}
+
+.menu {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: #667eea;
+}
+
+.active {
+  color: #667eea;
+  border-bottom: 2px solid #667eea;
+}
+
+.logout {
+  color: #A40F0F;
+
+  font-weight: bold;
+  align-items: center;
+}
+
+
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 101;
+}
+
+.burger span {
+  width: 25px;
+  height: 3px;
+  background: #333;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.hide {
+  display: none;
+}
+
+/* Responsive : mobile */
+@media (max-width: 768px) {
+    .nav_alt {
+      display: none;
+    }
+    
+    .burger {
+      display: flex;
+      position: relative;
+    }
+
+    .menu {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      height: 100vh;
+      max-width: 300px;
+      background: white;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 2rem 2rem 2rem;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+      transition: right 0.3s ease;
+    }
+
+    .menuOpen {
+        right: 0;
+    }
+
+    .menu li {
+        width: 100%;
+        text-align: end;
+    }
+    .profile {
+      float: right;
+    }
+
+    .link {
+        display: block;
+        padding: 0.5rem 1rem;
+        /* border-bottom: 1px solid #f0f0f0; */
+    }
+
+    .active {
+        border-bottom: 2px solid #667eea;
+    }
+} 

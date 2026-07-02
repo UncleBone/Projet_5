@@ -1,0 +1,30 @@
+.card {
+    background: #F5F5F5;
+    border-radius: 8px;
+    padding: 10px 20px;
+}
+.title {
+    font-weight: bold;
+    font-size: 16px;
+    margin: 10px 0;
+    text-transform: capitalize;
+}
+.description {
+    font-size: 14px;
+}
+.buttonContainer {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+}
+.button {
+    padding: 10px 20px;
+    background-color: var(--primary);
+    border-radius: 8px;
+    color: var(--primary-foreground);
+    font-weight: bold;
+}
+.button:hover {
+    opacity: 0.9;
+}

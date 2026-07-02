@@ -1,20 +1,22 @@
 import Link from "next/link";
+import Image from 'next/image'
 
-export const Home = () => {
+export const App = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background">
       <div className="text-center space-y-8">
         <div className="flex justify-center">
-          <div className="bg-primary text-primary-foreground text-4xl font-bold px-8 py-4 rounded-2xl">
-            MDD
-          </div>
+          <Image
+            src="/images/logo.png"
+            alt="logo MDD"
+            width={412}
+            height={238}
+            className="m-10"
+            preload={true}
+          />
         </div>
 
-        <h1 className="text-3xl font-bold text-foreground">
-          Monde de Dév
-        </h1>
-
-        <div className="flex gap-4">
+        <div className="flex gap-10 justify-center flex-col m-auto max-w-50 sm:flex-row sm:max-w-none">
           <Link
             href="/login"
             className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
@@ -25,7 +27,7 @@ export const Home = () => {
             href="/register"
             className="inline-flex items-center justify-center px-6 py-3 border-2 border-primary text-primary rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors"
           >
-            S&apos;inscrire
+            S'inscrire
           </Link>
         </div>
       </div>
@@ -33,4 +35,4 @@ export const Home = () => {
   );
 };
 
-export default Home;
+export default App;

@@ -1,0 +1,15 @@
+.back {
+    position: fixed;
+    top: 120px;
+    left: 0;
+}
+.arrow {
+    float: left;
+    margin: 20px;
+}
+
+@media (max-width: 768px) {
+    .back {
+        top: 20px;
+    }
+}
