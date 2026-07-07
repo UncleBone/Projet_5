@@ -1,48 +1,110 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useState, useEffect } from "react";
 import styles from './page.module.css'
 import { authService } from '@/service/auth.service';
-import db from '@/data/mockDB'
-import Post from '@/components/Post';
+import Post from '@/components/post';
 import { userService } from '@/service/user.service';
+import Link from 'next/link'
+import { PostDTO } from '@/dto/post.dto';
+import { postService } from '@/service/post.service';
+import { UserDTO } from '@/dto/user.dto';
 
 export const Home = () => {
     const router = useRouter();
-    const isAuth = authService.isAuthenticated();
-    if(!isAuth){
-        router.push('/');
+    const [isAuth,setIsAuth] = useState<boolean>(false);
+    const [user,setUser] = useState<UserDTO | null>(null);
+    const [posts,setPosts] = useState<PostDTO[]>([]);
+    const [sortBy, setSortBy] = useState<string>('desc');
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string>('');
+
+    useEffect(() => {
+        const auth = authService.isAuthenticated();
+        setIsAuth(auth);
+        if (!auth) router.push('/');
+        else {
+            const currentUser = authService.getCurrentUser();
+            if (!currentUser){ 
+                setError("Utilisateur inconnu");
+                setLoading(false);
+            }else{ 
+                setUser(currentUser);
+            }
+        }
+    }, [router]);
+
+    useEffect(() => {
+        if (!user) return;
+        try {
+            const subs = userService.getUserSubscriptions(user.id);
+            const postIds = subs.reduce<number[]>((acc, t_id) => acc.concat(postService.getPostsByTopic(t_id)), []);
+            const fetchedPosts = postIds.map((p_id) => postService.getPostFromId(p_id));
+            setPosts(fetchedPosts);
+            setLoading(false);
+        } catch {
+            setError('Erreur lors du chargement des articles');
+            setLoading(false);
+        }
+    }, [user]);
+
+    const sortFunction = (a: PostDTO,b: PostDTO) => {
+        const diff = new Date(a.date).getTime() - new Date(b.date).getTime();
+        return sortBy === 'asc' ? diff : -diff; 
     }
 
-    const posts = db.posts;
-    // const posts = [];
-    // console.log(posts)
+    const sortedPosts = [...posts].sort(sortFunction);
+
+    if(loading){
+        return (
+        <div className={styles.errorContainer}>
+            <div className={styles.loading}>
+                Chargement...
+            </div>   
+        </div> )
+    }
+
+    if(error){
+        return (
+        <div className={styles.errorContainer}>
+            <div className={styles.error}>
+                {error}
+            </div>   
+        </div> )
+    }
 
     return (
         <div className="bg-background">
             <div className={styles.header}>
-                <button
-                    data-cy="create"
-                    className={styles.button}
-                >
-                    Créer un article
-                </button>
+                <Link href='/home/create'>
+                    <button
+                        data-cy="create"
+                        className={styles.button}
+                    >
+                        Créer un article
+                    </button>
+                </Link>
                 <div className={styles.sortContainer}>
                     <label htmlFor="sort" className={styles.sortLabel}>Trier ↓</label>
-                    <select id="sort">
+                    <select id="sort" onChange={(e) => setSortBy(e.target.value)} >
                         <option value="desc" >Du plus récent au plus ancien</option>
                         <option value="asc" >Du plus ancien au plus récent</option>
                     </select>
                 </div>
             </div>
 
-            {posts.length === 0 ? 
+            {sortedPosts.length === 0 ? 
                 <div className={styles.empty} >Aucun article pour le moment</div>
             :
                 <div className={styles.container} >
-                    {posts.map((post) => {
-                        const auth = userService.getUserFromId(post.author);
-                        return <Post key={post.id} title={post.title} text={post.text} date={post.date.toISOString()} author={auth.username} />
+                    {sortedPosts.map((post) => {
+                        const author = userService.getUserFromId(post.author);
+                        return (
+                            <Link href={'/home/'+post.id} key={post.id} >
+                                <Post title={post.title} text={post.text} date={post.date.toLocaleDateString()} author={author.username} />
+                            </Link>
+                            )
                         }
                     )}
                 </div>

@@ -2,14 +2,14 @@
 
 import { useState, SubmitEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import Image from 'next/image'
 import styles from './page.module.css'
 import { CreateUserDTO } from "@/dto/user.dto";
+import { authService } from "@/service/auth.service";
 
 export const Register = () => {
     const router = useRouter();
-    const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -32,10 +32,10 @@ export const Register = () => {
         setLoading(true);
 
         try {
-            // await authService.register(formData);
+            await authService.register(formData);
             router.push('/home');
         } catch (err: any) {
-            setError(err.response.message || 'Registration failed');
+            setError(err || 'Registration failed');
         } finally {
             setLoading(false);
         }
@@ -43,7 +43,7 @@ export const Register = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center bg-background">
-            <Back />
+            <Back url='/' />
 
             <Image
                 src='/images/logo.png'

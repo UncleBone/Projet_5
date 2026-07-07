@@ -2,7 +2,7 @@
 
 import { useState, SubmitEvent } from "react";
 import { useRouter } from "next/navigation";
-import Back from "@/components/Back";
+import Back from "@/components/back";
 import Image from 'next/image'
 import styles from './page.module.css'
 import { authService } from "@/service/auth.service";
@@ -31,7 +31,7 @@ export const Login = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center bg-background">
-            <Back />
+            <Back url='/' />
 
             <Image
                 src='/images/logo.png'
@@ -61,7 +61,7 @@ export const Login = () => {
                     value={login}
                     onChange={(e) => setLogin(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
-                    // required
+                    required
                     />
                 </div>
 
@@ -75,7 +75,7 @@ export const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
-                    // required
+                    required
                     />
                 </div>
 

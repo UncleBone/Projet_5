@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import styles from './Back.module.css'
+import styles from './back.module.css'
 
-export default function Back() {
+export default function Back({ url } : { url: string }) {
     return (
-        <Link href='/' className={styles.back}>
+        <Link href={url} className={url === '/' ? styles.back : styles.back_alt}>
             <Image
                 src='/images/arrow.png'
                 alt='retour'

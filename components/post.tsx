@@ -1,4 +1,4 @@
-import styles from './Post.module.css'
+import styles from './post.module.css'
 
 export default function Post({ title, text, date, author }: { title: string, text: string, date: string, author: string }) {
     return (
@@ -6,7 +6,7 @@ export default function Post({ title, text, date, author }: { title: string, tex
             <h2 className={styles.title}>{title}</h2>
             <div className={styles.header}>
                 <span className={styles.date}>{date}</span>
-                <span className={styles.author}>{author}</span>
+                <span className={styles.author}>par {author}</span>
             </div>
             <div className={styles.text}>{text}</div>
         </div>
