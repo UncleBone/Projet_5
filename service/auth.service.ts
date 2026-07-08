@@ -1,80 +1,59 @@
-import { LoginUserDTO, AuthResponse, UserDTO, CreateUserDTO } from "@/dto/user.dto";
-import db from '@/data/mockDB'
+import { LoginUserDTO, AuthResponse, UserDTO, RegisterDTO, RegisterSchema } from "@/dto/user.dto";
 import { faker } from "@faker-js/faker";
+import { UserRepo } from "@/repository/user.repo";
+import * as bcrypt from 'bcrypt'
+import { NextResponse } from "next/server";
+import { createDecipheriv } from "crypto";
 
-export const authService = {
-    // login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    //     const response = await api.post<AuthResponse>('/auth/login', credentials);
-    //     if (response.data.token) {
-    //         localStorage.setItem('token', response.data.token);
-    //         localStorage.setItem('user', JSON.stringify(response.data));
-    //     }
-    //     return response.data;
-    // },
-    login: async (credentials: LoginUserDTO): Promise<AuthResponse> => {
-        const users = db.users;
-        console.log(users)
-        const { login, password } = credentials;
-        const user = await users.find(u => (u.username === login || u.email === login) && u.password === password );
+export class AuthService {
+    private userRepo = new UserRepo;
+
+    async login(credentials: LoginUserDTO): Promise<NextResponse> {
+        const { login } = credentials;
+        const pswd = credentials.password;
+        const userByUsername = await this.userRepo.getUserByUsername(login);
+        const userByEmail = await this.userRepo.getUserByEmail(login);
+        const user = userByUsername || userByEmail;
         if(!user){
-            throw("identifiants incorrects")
+            throw({ status: 401, message: 'Identifiants invalides' })
+        }
+        const isPasswordValid = await bcrypt.compare(pswd, user.password);
+        console.log(login, pswd, user, isPasswordValid)
+    
+        if (!isPasswordValid) {
+            throw({ status: 401, message: 'Mot de passe incorrect' });
         }
         const token = faker.internet.jwt();
-        const response = {...user, token: token };
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(response));
-        return response;
-    },
+        const { password, ...userWithoutPassword } = user;
+        const response = {...userWithoutPassword, token: token };
+        
+        return NextResponse.json(response)
+    };
 
-    // register: async (data: RegisterData): Promise<AuthResponse> => {
-    //     const response = await api.post<AuthResponse>('/auth/register', data);
-    //     if (response.data.token) {
-    //     localStorage.setItem('token', response.data.token);
-    //     localStorage.setItem('user', JSON.stringify(response.data));
-    //     }
-    //     return response.data;
-    // },
-    register: async (data: CreateUserDTO): Promise<AuthResponse> => {
-        const users = db.users;
-        const { username, email, password } = data;
-        if(!username || !email || !password){
-            throw("Veuillez remplir tous les champs")
+    async register(data: RegisterDTO): Promise<NextResponse> {
+        const { username, email } = data;
+        const pswd = data.password;
+        if(!username || !email || !pswd){
+            throw({ status: 400, message: "Veuillez remplir tous les champs" })
         }
-        const checkUsername = await users.find(u => u.username === username);
-        if(checkUsername){
-            throw("Ce nom d'utilisateur est déjà pris")
+        const userByUsername = await this.userRepo.getUserByUsername(username);
+        if(userByUsername){
+            throw({ status: 400, message: "Ce nom d'utilisateur existe déjà" })
         }
-        const checkEmail = await users.find(u => u.email === email);
-        if(checkEmail){
-            throw("Cet email existe déjà")
+        const userByEmail = await this.userRepo.getUserByEmail(email);
+        if(userByEmail){
+            throw({ status: 400, message: "Cet email existe déjà" })
         }
-        let id = 1;
-        let checkId = null;
-        do{ 
-            id++;
-            checkId = users.find(u => u.id === id)    
-        }while(checkId)
-            const user = { id, username, email, password };
-        users.push(user);
+        const parsed = RegisterSchema.parse(data);
+
+        const hashedPassword = await bcrypt.hash(pswd, 10);
+        const { password, ...newUser } = await this.userRepo.createUser({...parsed, password: hashedPassword});
+
         const token = faker.internet.jwt();
-        const response = {...user, token: token };
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(response));
-        return response;
-    },
-
-    logout: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-    },
-
-    getCurrentUser: (): UserDTO | null => {
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-            return JSON.parse(userStr);
-        }
-        return null;
-    },
+        const response = {...newUser, token: token };
+        
+        return NextResponse.json(response)
+    };
 
     // updateCurrentUser: (updates: Partial<AuthResponse>): AuthResponse | null => {
     //     const userStr = localStorage.getItem('user');
@@ -87,12 +66,12 @@ export const authService = {
     //     return nextUser;
     // },
 
-    getToken: (): string | null => {
+    getToken(): string | null {
         return localStorage.getItem('token');
-    },
+    };
 
-    isAuthenticated: (): boolean => {
+    isAuthenticated(): boolean {
         if(!window) throw("window error")
         return !!window.localStorage.getItem('token');
-    },
+    };
 }

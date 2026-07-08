@@ -1,12 +1,22 @@
 import db from '@/data/mockDB'
+import { PostRepo } from '@/repository/post.repo';
+import { NextResponse } from 'next/server'
 
-export const postService = {
+
+export class PostService {
+    private postRepo = new PostRepo;
+
+    async getAll() {
+        const posts = await this.postRepo.getAll();
+        return NextResponse.json(posts)
+    };
+
     getPostFromId(id: number) {
         const post = db.posts.find((p) => p.id === id ? p : null)
         if(!post)
             throw('post not found'); 
         return post
-    },
+    };
 
     getPostComments(id: number) {
         const comments = db.comments;
@@ -16,7 +26,7 @@ export const postService = {
             }
             return acc
         }, [])
-    },
+    };
 
     getPostsByTopic(t_id: number) {
         const posts = db.posts.reduce<number[]>((acc,p) => {

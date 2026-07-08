@@ -3,12 +3,12 @@
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from "react";
 import styles from './page.module.css'
-import { authService } from '@/service/auth.service';
+import { AuthService } from '@/service/auth.service';
 import Post from '@/components/post';
 import { userService } from '@/service/user.service';
 import Link from 'next/link'
 import { PostDTO } from '@/dto/post.dto';
-import { postService } from '@/service/post.service';
+import { PostService } from '@/service/post.service';
 import { UserDTO } from '@/dto/user.dto';
 
 export const Home = () => {
@@ -21,27 +21,26 @@ export const Home = () => {
     const [error, setError] = useState<string>('');
 
     useEffect(() => {
-        const auth = authService.isAuthenticated();
-        setIsAuth(auth);
-        if (!auth) router.push('/');
-        else {
-            const currentUser = authService.getCurrentUser();
-            if (!currentUser){ 
-                setError("Utilisateur inconnu");
-                setLoading(false);
-            }else{ 
-                setUser(currentUser);
-            }
-        }
+        // const auth = AuthService.isAuthenticated();
+        // setIsAuth(auth);
+        // if (!auth) router.push('/');
+        // else {
+        //     const currentUser = AuthService.getCurrentUser();
+        //     if (!currentUser){ 
+        //         setError("Utilisateur inconnu");
+        //         setLoading(false);
+        //     }else{ 
+        //         setUser(currentUser);
+        //     }
+        // }
     }, [router]);
 
     useEffect(() => {
         if (!user) return;
         try {
-            const subs = userService.getUserSubscriptions(user.id);
-            const postIds = subs.reduce<number[]>((acc, t_id) => acc.concat(postService.getPostsByTopic(t_id)), []);
-            const fetchedPosts = postIds.map((p_id) => postService.getPostFromId(p_id));
-            setPosts(fetchedPosts);
+            fetch('/api/posts')
+            .then(res => res.json())
+            .then(setPosts)
             setLoading(false);
         } catch {
             setError('Erreur lors du chargement des articles');
@@ -102,7 +101,7 @@ export const Home = () => {
                         const author = userService.getUserFromId(post.author);
                         return (
                             <Link href={'/home/'+post.id} key={post.id} >
-                                <Post title={post.title} text={post.text} date={post.date.toLocaleDateString()} author={author.username} />
+                                <Post title={post.title} text={post.text} date={new Date(post.date).toLocaleDateString()} author={author.username} />
                             </Link>
                             )
                         }

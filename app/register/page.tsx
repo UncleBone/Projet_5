@@ -6,7 +6,7 @@ import Back from "@/components/back";
 import Image from 'next/image'
 import styles from './page.module.css'
 import { CreateUserDTO } from "@/dto/user.dto";
-import { authService } from "@/service/auth.service";
+import { authClientService } from "@/service/auth.client.service";
 
 export const Register = () => {
     const router = useRouter();
@@ -32,13 +32,28 @@ export const Register = () => {
         setLoading(true);
 
         try {
-            await authService.register(formData);
-            router.push('/home');
+            const result = await fetch('/api/auth/register', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData)
+            })
+            if (!result.ok) {
+                const errorData = await result.json().catch(() => null);
+                const message = errorData.message;
+                throw new Error(message);
+            }else{
+                const data = await result.json();
+                authClientService.login(data);
+                router.push('/home');
+            }
         } catch (err: any) {
-            setError(err || 'Registration failed');
+            setError(err.message || 'Registration failed');
         } finally {
             setLoading(false);
         }
+        
     };
 
     return (

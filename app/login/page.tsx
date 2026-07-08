@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Back from "@/components/back";
 import Image from 'next/image'
 import styles from './page.module.css'
-import { authService } from "@/service/auth.service";
+import { authClientService } from "@/service/auth.client.service";
 
 export const Login = () => {
     const router = useRouter()
@@ -20,10 +20,28 @@ export const Login = () => {
         setLoading(true);
 
         try {
-            await authService.login({ login, password });
-            router.push('/home');
+            const result = await fetch('/api/auth/login', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ login, password })
+            })
+            if (!result.ok) {
+                const errorData = await result.json().catch(() => null);
+                const message = errorData.message;
+                throw new Error(message);
+            }else{
+                const data = await result.json();
+                authClientService.login(data);
+                router.push('/home');
+            }
+
+            // const data = await result.json();
+
         } catch (err: any) {
-            setError(err || 'Login failed');
+            console.log("error",err)
+            setError(err.message || 'Login failed');
         } finally {
             setLoading(false);
         }

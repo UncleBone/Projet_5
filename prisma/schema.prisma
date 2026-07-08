@@ -1,22 +1,65 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-// TODO: Define your data models here
-// Example:
-// model User {
-//   id        Int      @id @default(autoincrement())
-//   email     String   @unique
-//   username  String   @unique
-//   password  String
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
+model comments {
+  id      Int      @id @default(autoincrement())
+  author  Int
+  post_id Int
+  text    String   @db.Text
+  date    DateTime @default(now()) @db.Timestamp(0)
+  users   users    @relation(fields: [author], references: [id], onDelete: Cascade, map: "comments_ibfk_1")
+  posts   posts    @relation(fields: [post_id], references: [id], onDelete: Cascade, map: "comments_ibfk_2")
+
+  @@index([author], map: "author")
+  @@index([post_id], map: "post_id")
+}
+
+model subscriptions {
+  user_id  Int
+  topic_id Int
+  topics   topics @relation(fields: [topic_id], references: [id], onDelete: Cascade, map: "subscriptions_ibfk_1")
+  users    users  @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "subscriptions_ibfk_2")
+
+  @@id([topic_id, user_id])
+  @@index([user_id], map: "user_id")
+}
+
+model topics {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  description   String          @db.Text
+  posts         posts[]
+  subscriptions subscriptions[]
+}
+
+model users {
+  id            Int             @id @default(autoincrement())
+  username      String          @unique(map: "username") @db.VarChar(100)
+  email         String          @unique(map: "email") @db.VarChar(255)
+  password      String          @db.VarChar(255)
+  comments      comments[]
+  posts         posts[]
+  subscriptions subscriptions[]
+}
+
+model posts {
+  id       Int        @id @default(autoincrement())
+  title    String     @db.VarChar(255)
+  text     String     @db.Text
+  date     DateTime   @default(now()) @db.Timestamp(0)
+  author   Int
+  topic    Int
+  comments comments[]
+  users    users      @relation(fields: [author], references: [id], onDelete: Cascade, map: "posts_ibfk_1")
+  topics   topics     @relation(fields: [topic], references: [id], onDelete: Cascade, map: "posts_ibfk_2")
+
+  @@index([author], map: "author")
+  @@index([topic], map: "topic")
+}

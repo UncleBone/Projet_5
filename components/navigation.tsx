@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import styles from './navigation.module.css'
 import Image from 'next/image'
 import Link from 'next/link'
-import { authService } from '@/service/auth.service'
+import { authClientService } from '@/service/auth.client.service'
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -23,7 +23,7 @@ export default function Navigation() {
   }
 
   const logout = () => {
-    authService.logout();
+    authClientService.logout();
     router.push('/')
   }
 
