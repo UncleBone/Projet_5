@@ -5,11 +5,11 @@ export class AuthController {
     private authService = new AuthService;
 
     async login(body: LoginUserDTO) {
-        return this.authService.login(body)
+        return this.authService.login(body);
     }
 
     async register(body: RegisterDTO) {
-        return this.authService.register(body)
+        return await this.authService.register(body)
     }
     
 }

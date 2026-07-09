@@ -3,13 +3,12 @@
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from "react";
 import styles from './page.module.css'
-import { AuthService } from '@/service/auth.service';
 import Post from '@/components/post';
 import { userService } from '@/service/user.service';
 import Link from 'next/link'
 import { PostDTO } from '@/dto/post.dto';
-import { PostService } from '@/service/post.service';
 import { UserDTO } from '@/dto/user.dto';
+import { authClientService } from '@/service/auth.client.service';
 
 export const Home = () => {
     const router = useRouter();
@@ -21,18 +20,18 @@ export const Home = () => {
     const [error, setError] = useState<string>('');
 
     useEffect(() => {
-        // const auth = AuthService.isAuthenticated();
-        // setIsAuth(auth);
-        // if (!auth) router.push('/');
-        // else {
-        //     const currentUser = AuthService.getCurrentUser();
-        //     if (!currentUser){ 
-        //         setError("Utilisateur inconnu");
-        //         setLoading(false);
-        //     }else{ 
-        //         setUser(currentUser);
-        //     }
-        // }
+        const auth = authClientService.isAuthenticated();
+        setIsAuth(auth);
+        if (!auth) router.push('/');
+        else {
+            const currentUser = authClientService.getCurrentUser();
+            if (!currentUser){ 
+                setError("Utilisateur inconnu");
+                setLoading(false);
+            }else{ 
+                setUser(currentUser);
+            }
+        }
     }, [router]);
 
     useEffect(() => {

@@ -37,8 +37,6 @@ export const Login = () => {
                 router.push('/home');
             }
 
-            // const data = await result.json();
-
         } catch (err: any) {
             console.log("error",err)
             setError(err.message || 'Login failed');

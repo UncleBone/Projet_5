@@ -19,4 +19,12 @@ export const authClientService = {
         }
         return null;
     },
+
+    getToken(): string | null {
+        return localStorage.getItem('token');
+    },
+
+    isAuthenticated(): boolean {
+        return !!localStorage.getItem('token');
+    },
 }
