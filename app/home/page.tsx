@@ -4,16 +4,15 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect } from "react";
 import styles from './page.module.css'
 import Post from '@/components/post';
-import { userService } from '@/service/user.service';
 import Link from 'next/link'
 import { PostDTO } from '@/dto/post.dto';
-import { UserDTO } from '@/dto/user.dto';
+import { AuthResponse, UserDTO } from '@/dto/user.dto';
 import { authClientService } from '@/service/auth.client.service';
 
 export const Home = () => {
     const router = useRouter();
     const [isAuth,setIsAuth] = useState<boolean>(false);
-    const [user,setUser] = useState<UserDTO | null>(null);
+    const [user,setUser] = useState<AuthResponse | null>(null);
     const [posts,setPosts] = useState<PostDTO[]>([]);
     const [sortBy, setSortBy] = useState<string>('desc');
     const [loading, setLoading] = useState<boolean>(true);
@@ -37,7 +36,11 @@ export const Home = () => {
     useEffect(() => {
         if (!user) return;
         try {
-            fetch('/api/posts')
+            fetch('/api/posts', {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            })
             .then(res => res.json())
             .then(setPosts)
             setLoading(false);
@@ -52,7 +55,7 @@ export const Home = () => {
         return sortBy === 'asc' ? diff : -diff; 
     }
 
-    const sortedPosts = [...posts].sort(sortFunction);
+    const sortedPosts = posts.length > 0 ? [...posts].sort(sortFunction) : [];
 
     if(loading){
         return (
@@ -97,10 +100,9 @@ export const Home = () => {
             :
                 <div className={styles.container} >
                     {sortedPosts.map((post) => {
-                        const author = userService.getUserFromId(post.author);
                         return (
                             <Link href={'/home/'+post.id} key={post.id} >
-                                <Post title={post.title} text={post.text} date={new Date(post.date).toLocaleDateString()} author={author.username} />
+                                <Post title={post.title} text={post.text} date={new Date(post.date).toLocaleDateString()} author={post.users.username} />
                             </Link>
                             )
                         }

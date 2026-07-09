@@ -1,3 +1,5 @@
+import { UserDTO } from "./user.dto";
+
 export interface PostDTO {
     id: number;
     title: string;
@@ -5,6 +7,7 @@ export interface PostDTO {
     author: number;
     topic: number;
     date: Date;
+    users: UserDTO
 }
 
 export interface CreatePostDTO {

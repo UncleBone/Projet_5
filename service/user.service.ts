@@ -1,24 +1,24 @@
 import db from '@/data/mockDB'
+import { UserRepo } from '@/repository/user.repo';
 
-export const userService = {
-    getUserFromId: (id: number) => {
-        const user = db.users.find((u) => u.id === id ? u : null)
-        if(!user)
-            throw('user not found'); 
-        return user       
-    },
+export class UserService {
+    private userRepo = new UserRepo;
 
-    getUserSubscriptions: (id: number) => {
-        const sub = db.subscriptions;
-        return sub.reduce<number[]>((acc,s) => {
-            if(s.u_id === id) {
-                acc.push(s.t_id)
-            }
-            return acc
-        }, [])
-    },
+    // getUserFromId = (id: number) => {
+    //     const user = db.users.find((u) => u.id === id ? u : null)
+    //     if(!user)
+    //         throw('user not found'); 
+    //     return user       
+    // };
 
-    // getUserPassword: (id: number) => {
-    //     const user 
-    // }
+    async getUserSubscriptions(id: number) {
+        const subs = await this.userRepo.getSubscriptions(id);
+        return subs
+    };
+
+    async getUserInfo(id: number) {
+        const user = await this.userRepo.getUserById(id);
+        
+        return user
+    };
 }

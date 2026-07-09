@@ -30,4 +30,15 @@ export class UserRepo {
         const user = await prisma.users.create({ data });
         return user
     }
+
+    async getSubscriptions(userId: number) {
+        const subs = await prisma.topics.findMany({
+            where: {
+                subscriptions: {
+                    some: { user_id: userId }
+                }
+            }
+        })
+        return subs
+    }
 }

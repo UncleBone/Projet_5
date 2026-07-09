@@ -3,22 +3,33 @@
 import { useState, useEffect, SubmitEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import styles from './page.module.css'
-// import { userService } from "@/service/user.service";
-import { authService } from "@/service/auth.service";
 import { CreatePostDTO } from "@/dto/post.dto";
-import { topicService } from "@/service/topic.service";
 import Back from "@/components/back";
+import { authClientService } from "@/service/auth.client.service";
+import { AuthResponse } from "@/dto/user.dto";
+import { TopicDTO } from "@/dto/topic.dto";
 
 export const Create = () => {
     const router = useRouter();
     const [error, setError] = useState<string>('');
     const [isAuth, setIsAuth] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [user,setUser] = useState<AuthResponse | null>(null);
+    const [topics,setTopics] = useState<TopicDTO[]>([]);
 
     useEffect(() => {
-        const auth = authService.isAuthenticated();
+        const auth = authClientService.isAuthenticated();
         setIsAuth(auth);
         if (!auth) router.push('/');
+        else {
+            const currentUser = authClientService.getCurrentUser();
+            if (!currentUser){ 
+                setError("Utilisateur inconnu");
+                setLoading(false);
+            }else{ 
+                setUser(currentUser);
+            }
+        }
     }, [router]);
 
 
@@ -28,7 +39,22 @@ export const Create = () => {
         text: '',
     });
 
-    const topics = topicService.getAllTopics();
+    useEffect(() => {
+        if(!user) return
+        try {
+            fetch('/api/topics', {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            })
+            .then(res => res.json())
+            .then(setTopics)
+            setLoading(false);
+        } catch {
+            setError('Erreur lors du chargement des articles');
+            setLoading(false);
+        }
+    }, [user]);
 
     const handleChange = (e: ChangeEvent & {target: HTMLInputElement}): void => {
         setFormData({

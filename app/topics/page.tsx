@@ -3,15 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'
 import styles from './page.module.css'
-import { authService } from '@/service/auth.service';
-import db from '@/data/mockDB'
 import Topic from '@/components/topic';
-import { userService } from '@/service/user.service';
-import { UserDTO } from '@/dto/user.dto';
+import { AuthResponse } from '@/dto/user.dto';
+import { authClientService } from '@/service/auth.client.service';
+import { TopicDTO } from '@/dto/topic.dto';
 
 export const Topics = () => {
   const [isAuth,setIsAuth] = useState<boolean>(false);
-  const [user,setUser] = useState<UserDTO | null>(null);
+  const [user,setUser] = useState<AuthResponse | null>(null);
+  const [topics,setTopics] = useState<TopicDTO[]>([]);
   const [subs,setSubs] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -19,11 +19,11 @@ export const Topics = () => {
   const router = useRouter();
 
   useEffect(() => {
-      const auth = authService.isAuthenticated();
+      const auth = authClientService.isAuthenticated();
       setIsAuth(auth);
       if (!auth) router.push('/');
       else {
-          const currentUser = authService.getCurrentUser();
+          const currentUser = authClientService.getCurrentUser();
           if (!currentUser){ 
               setError("Utilisateur inconnu");
               setLoading(false);
@@ -35,14 +35,33 @@ export const Topics = () => {
 
   useEffect(() => {
     if (!user) return;
-    try {
-        const fetchedSubs = userService.getUserSubscriptions(user.id);
-        setSubs(fetchedSubs);
+
+    const fetchData = async () => {
+      try {
+        const headers = { 'Authorization': `Bearer ${user.token}` };
+
+        const [topicsRes, subsRes] = await Promise.all([
+          fetch('/api/topics', { headers }),
+          fetch('/api/user/subscriptions', { headers })
+        ]);
+
+        if (!topicsRes.ok || !subsRes.ok) {
+          throw new Error('Erreur chargement');
+        }
+
+        const topicsData = await topicsRes.json();
+        const subsData = await subsRes.json();
+
+        setTopics(topicsData);
+        setSubs(subsData.map((sub: TopicDTO) => sub.id)); 
         setLoading(false);
-    } catch {
-        setError('Erreur lors du chargement des abonnements');
+      } catch (err) {
+        setError('Erreur lors du chargement des données');
         setLoading(false);
-    }
+      }
+    };
+
+    fetchData();
   }, [user]);
 
   if(loading){
@@ -63,7 +82,6 @@ export const Topics = () => {
     </div> )
   } 
 
-  const topics = db.topics;
   return (
     <div className={styles.container}>
       {topics.map((topic) => 

@@ -1,7 +1,7 @@
-import { PostController } from '@/controller/post.controller'
+import { UserController } from '@/controller/user.controller';
 import { verifyToken } from '@/lib/jwt';
 
-const controller = new PostController;
+const controller = new UserController;
 
 export async function GET(req: Request) {
     try {
@@ -16,9 +16,9 @@ export async function GET(req: Request) {
             return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
         }
 
-        const posts = await controller.getAll(decoded); 
+        const user = await controller.getUserInfo(decoded.id); 
 
-        return new Response(JSON.stringify(posts), {
+        return new Response(JSON.stringify(user), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });

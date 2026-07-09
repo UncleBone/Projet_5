@@ -1,7 +1,7 @@
 import { LoginUserDTO, AuthResponse, UserDTO, RegisterDTO, RegisterSchema } from "@/dto/user.dto";
 import { UserRepo } from "@/repository/user.repo";
 import * as bcrypt from 'bcrypt'
-import { generateToken, verifyToken } from "@/lib/jwt";
+import { generateToken } from "@/lib/jwt";
 
 export class AuthService {
     private userRepo = new UserRepo;

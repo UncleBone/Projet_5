@@ -3,17 +3,15 @@
 import { useState, useEffect, SubmitEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import styles from './page.module.css'
-import { CreateUserDTO, UserDTO } from "@/dto/user.dto";
+import { AuthResponse, CreateUserDTO, UserDTO } from "@/dto/user.dto";
 import Topic from "@/components/topic";
-import { userService } from "@/service/user.service";
-import { authService } from "@/service/auth.service";
-import { topicService } from "@/service/topic.service";
 import { TopicDTO } from "@/dto/topic.dto";
+import { authClientService } from "@/service/auth.client.service";
 
 export const Profile = () => {
     const router = useRouter();
     const [isAuth,setIsAuth] = useState<boolean>(false);
-    const [user,setUser] = useState<UserDTO | null>(null);
+    const [user,setUser] = useState<AuthResponse | null>(null);
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
@@ -25,11 +23,11 @@ export const Profile = () => {
     const [topics, setTopics] = useState<TopicDTO[]>([]);
 
     useEffect(() => {
-        const auth = authService.isAuthenticated();
+        const auth = authClientService.isAuthenticated();
         setIsAuth(auth);
         if (!auth) router.push('/');
         else {
-            const currentUser = authService.getCurrentUser();
+            const currentUser = authClientService.getCurrentUser();
             if (!currentUser){ 
                 setError("Utilisateur inconnu");
                 setLoading(false);
@@ -41,17 +39,24 @@ export const Profile = () => {
 
     useEffect(() => {
         if(!user) return
-        const userInfo = userService.getUserFromId(user.id);
         setFormData({
             username: user.username,
             email: user.email,
-            password: userInfo.password,
+            password: "",
         });
-
-        const subs = userService.getUserSubscriptions(user.id);
-        const t: TopicDTO[] = subs.map((s) => topicService.getTopicFromId(s));
-        setTopics(t);
-   
+        try{
+            fetch('/api/user/subscriptions', {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            })
+            .then(res => res.json())
+            .then(setTopics)
+            setLoading(false);
+        } catch {
+            setError('Erreur lors du chargement des abonnements');
+            setLoading(false);
+        }
     },[user])
     
     const handleChange = (e: ChangeEvent & {target: HTMLInputElement}): void => {
