@@ -128,8 +128,8 @@ export const Profile = () => {
 
     if(error){
         return (
-        <div className={styles.errorContainer}>
-            <div className={styles.error}>
+        <div className="container">
+            <div className="error">
                 {error}
             </div>   
         </div> )

@@ -104,7 +104,7 @@ export default function FullPostComponent({ post_id }: { post_id: number }) {
     if(error){
         return (
         <div className="container">
-            <div className={styles.error}>
+            <div className="error">
                 {error}
             </div>   
         </div> )
@@ -138,7 +138,7 @@ export default function FullPostComponent({ post_id }: { post_id: number }) {
                 <Comment author={c.users.username} text={c.text} key={c.id} />
             )}
             {newCommentError ? (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" data-cy="error">
+            <div className="error">
                 {newCommentError}
             </div>
             ) : null}

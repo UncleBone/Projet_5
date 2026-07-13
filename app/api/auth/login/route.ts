@@ -1,19 +1,13 @@
 import { AuthController } from "@/controller/auth.controller";
+import { withErrorHandling } from "@/lib/errorHandler";
+import { NextResponse } from "next/server";
 
 const controller = new AuthController;
 
-export async function POST(req: Request) {
-    try {
-        const data = await req.json();
-        const result = await controller.login(data);
-        return new Response(JSON.stringify(result), { status: 200, headers: { 'Content-Type': 'application/json' } });
-    } catch (error: any) {
-        const status = error.status || 500;
-        const message = error.message || 'Erreur serveur';
-
-        return new Response(JSON.stringify({ message }), {
-            status,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    }
+async function postHandler(req: Request) {
+    const data = await req.json();
+    const result = await controller.login(data);
+    return NextResponse.json(result, { status: 200, headers: { 'Content-Type': 'application/json' } });
 }
+
+export const POST = withErrorHandling(postHandler);

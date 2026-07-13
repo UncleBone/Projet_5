@@ -69,7 +69,7 @@ export const Home = () => {
     if(error){
         return (
         <div className="container">
-            <div className={styles.error}>
+            <div className="error">
                 {error}
             </div>   
         </div> )
@@ -98,7 +98,7 @@ export const Home = () => {
             {sortedPosts.length === 0 ? 
                 <div className={styles.empty} >Aucun article pour le moment</div>
             :
-                <div className={styles.container} >
+                <div className={styles.postContainer} >
                     {sortedPosts.map((post) => {
                         return (
                             <Link href={'/home/'+post.id} key={post.id} >

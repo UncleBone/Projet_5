@@ -1,72 +1,51 @@
 import { UserController } from '@/controller/user.controller';
+import { withErrorHandling } from '@/lib/errorHandler';
 import { verifyToken } from '@/lib/jwt';
 import { NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 
 const controller = new UserController;
 
-export async function GET(req: Request) {
-    try {
-        const authHeader = req.headers.get('authorization') || '';
-        if (!authHeader.startsWith('Bearer ')) {
-            return new Response(JSON.stringify({ message: 'Token manquant' }), { status: 401 });
-        }
-
-        const token = authHeader.split(' ')[1];
-        const decoded = verifyToken(token);
-        if (!decoded) {
-            return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
-        }
-
-        const user = await controller.getUserInfo(decoded.id); 
-
-        return new Response(JSON.stringify(user), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    } catch (err) {
-        return new Response(JSON.stringify({ message: 'Erreur serveur' }), { status: 500 });
+async function getHandler(req: Request) {
+    const authHeader = req.headers.get('authorization') || '';
+    if (!authHeader.startsWith('Bearer ')) {
+        return new Response(JSON.stringify({ message: 'Token manquant' }), { status: 401 });
     }
+
+    const token = authHeader.split(' ')[1];
+    const decoded = verifyToken(token);
+    if (!decoded) {
+        return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
+    }
+
+    const user = await controller.getUserInfo(decoded.id); 
+
+    return new Response(JSON.stringify(user), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+    });
 }
 
-export async function PUT(req: Request) {
-    try {
-        const authHeader = req.headers.get('authorization') || '';
-        if (!authHeader.startsWith('Bearer ')) {
-            return new Response(JSON.stringify({ message: 'Token manquant' }), { status: 401 });
-        }
-
-        const token = authHeader.split(' ')[1];
-        const decoded = verifyToken(token);
-        if (!decoded) {
-            return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
-        }
-
-        const data = await req.json();
-        const result = await controller.update(decoded.id,data);
-
-        return NextResponse.json(result, {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    } catch (error: any) {
-        if (error instanceof ZodError) {
-            const errors = error.issues.map(e => ({
-                field: e.path.join('.'),
-                message: e.message
-            }));
-            return new Response(JSON.stringify(errors[0]), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
-
-        const status = error.status || 500;
-        const message = error.message || 'Erreur serveur';
-
-        return new Response(JSON.stringify({ message }), {
-            status,
-            headers: { 'Content-Type': 'application/json' }
-        });
+async function putHandler(req: Request) {
+    const authHeader = req.headers.get('authorization') || '';
+    if (!authHeader.startsWith('Bearer ')) {
+        return new Response(JSON.stringify({ message: 'Token manquant' }), { status: 401 });
     }
+
+    const token = authHeader.split(' ')[1];
+    const decoded = verifyToken(token);
+    if (!decoded) {
+        return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
+    }
+
+    const data = await req.json();
+    const result = await controller.update(decoded.id,data);
+
+    return NextResponse.json(result, {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+    });
 }
+
+export const GET = withErrorHandling(getHandler);
+export const PUT = withErrorHandling(putHandler);

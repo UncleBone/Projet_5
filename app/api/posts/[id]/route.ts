@@ -18,7 +18,6 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
     }
     const post = await controller.getById(Number(id));
-    console.log("route post id",id,post)
     if (!post) {
       return NextResponse.json({ message: 'Post non trouvé' }, { status: 404 });
     }

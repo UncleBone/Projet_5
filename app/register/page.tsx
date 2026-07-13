@@ -65,7 +65,7 @@ export const Register = () => {
                 alt='logo MDD'
                 width={412*0.7}
                 height={238*0.7}
-                className={styles.logo}
+                className="logo_login"
             />
 
             <h2 className="title" data-cy="title">
@@ -73,7 +73,7 @@ export const Register = () => {
             </h2>
 
             {error ? (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" data-cy="register_error">
+            <div className="error" data-cy="register_error">
                 {error}
             </div>
             ) : null}

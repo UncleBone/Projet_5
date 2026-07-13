@@ -4,7 +4,6 @@ import { useState, SubmitEvent } from "react";
 import { useRouter } from "next/navigation";
 import Back from "@/components/back";
 import Image from 'next/image'
-import styles from './page.module.css'
 import { authClientService } from "@/service/auth.client.service";
 
 export const Login = () => {
@@ -38,7 +37,6 @@ export const Login = () => {
             }
 
         } catch (err: any) {
-            console.log("error",err)
             setError(err.message || 'Login failed');
         } finally {
             setLoading(false);
@@ -54,7 +52,7 @@ export const Login = () => {
                 alt='logo MDD'
                 width={412*0.7}
                 height={238*0.7}
-                className={styles.logo}
+                className="logo_login"
             />
 
             <h2 className="title" data-cy="title">
@@ -62,7 +60,7 @@ export const Login = () => {
             </h2>
 
             {error ? (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" data-cy="login_error">
+            <div className="error" data-cy="login_error">
                 {error}
             </div>
             ) : null}
