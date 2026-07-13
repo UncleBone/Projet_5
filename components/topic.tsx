@@ -1,6 +1,7 @@
 import styles from './topic.module.css'
 
-export default function Topic({ title, description, subscribed, profile }: { title: string, description: string, subscribed: boolean, profile: boolean }) {
+export default function Topic({ title, description, subscribed, profile, handleClick }: 
+    { title: string, description: string, subscribed: boolean, profile: boolean, handleClick: () => void }) {
     let buttonDisabled;
     let buttonText;
     if(profile){
@@ -15,7 +16,11 @@ export default function Topic({ title, description, subscribed, profile }: { tit
             <h2 className={styles.title}>{title}</h2>
             <div className={styles.description}>{description}</div>
             <div className={styles.buttonContainer} >
-                <button disabled={buttonDisabled} className={buttonDisabled ? "button_disabled" : "button" } >
+                <button 
+                disabled={buttonDisabled} 
+                className={buttonDisabled ? "button_disabled" : "button"} 
+                onClick={handleClick}
+                 >
                     {buttonText}
                 </button>
             </div>

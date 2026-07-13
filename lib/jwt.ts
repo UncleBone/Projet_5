@@ -8,12 +8,11 @@ export function generateToken(user: UserDTO): string {
 }
 
 export function verifyToken(token: string): any {
-    console.log(JWT_SECRET,token)
   try {
     const result = jwt.verify(token, JWT_SECRET);
     return result
   } catch (error) {
-    console.log("verify error",error)
+    console.error("verify error",error)
     return null;
   }
 }

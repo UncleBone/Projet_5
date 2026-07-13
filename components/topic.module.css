@@ -18,13 +18,3 @@
     display: flex;
     justify-content: center;
 }
-.button {
-    padding: 10px 20px;
-    background-color: var(--primary);
-    border-radius: 8px;
-    color: var(--primary-foreground);
-    font-weight: bold;
-}
-.button:hover {
-    opacity: 0.9;
-}

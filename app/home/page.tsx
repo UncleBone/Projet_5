@@ -59,7 +59,7 @@ export const Home = () => {
 
     if(loading){
         return (
-        <div className={styles.errorContainer}>
+        <div className="container">
             <div className={styles.loading}>
                 Chargement...
             </div>   
@@ -68,7 +68,7 @@ export const Home = () => {
 
     if(error){
         return (
-        <div className={styles.errorContainer}>
+        <div className="container">
             <div className={styles.error}>
                 {error}
             </div>   
@@ -81,14 +81,14 @@ export const Home = () => {
                 <Link href='/home/create'>
                     <button
                         data-cy="create"
-                        className={styles.button}
+                        className="button"
                     >
                         Créer un article
                     </button>
                 </Link>
                 <div className={styles.sortContainer}>
                     <label htmlFor="sort" className={styles.sortLabel}>Trier ↓</label>
-                    <select id="sort" onChange={(e) => setSortBy(e.target.value)} >
+                    <select id="sort" onChange={(e) => setSortBy(e.target.value)} className='cursor-pointer'>
                         <option value="desc" >Du plus récent au plus ancien</option>
                         <option value="asc" >Du plus ancien au plus récent</option>
                     </select>

@@ -1,4 +1,5 @@
 import db from '@/data/mockDB'
+import { CreateCommentDTO, CreateCommentSchema, CreatePostDTO, CreatePostSchema } from '@/dto/post.dto';
 import { AuthResponse } from '@/dto/user.dto';
 import { PostRepo } from '@/repository/post.repo';
 import { NextResponse } from 'next/server'
@@ -17,27 +18,15 @@ export class PostService {
         return post
     };
 
-    
-    
-    
-    // getPostComments(id: number) {
-    //     const comments = db.comments;
-    //     return comments.reduce<number[]>((acc,c) => {
-    //         if(c.p_id === id) {
-    //             acc.push(c.id)
-    //         }
-    //         return acc
-    //     }, [])
-    // };
+    async create(userId: number, body: CreatePostDTO) {
+        const parsed = CreatePostSchema.parse(body);
+        const data = {...parsed, topic: Number(body.topic), author: userId}
+        await this.postRepo.create(data);
+    };
 
-    // getPostsByTopic(t_id: number) {
-    //     const posts = db.posts.reduce<number[]>((acc,p) => {
-    //         if(p.topic === t_id) {
-    //             acc.push(p.id)
-    //         }
-    //         return acc
-    //     }, [])
-
-    //     return posts
-    // }
+    async addComment(userId: number, body: CreateCommentDTO) {
+        const parsed = CreateCommentSchema.parse(body);
+        const data = {...parsed, author: userId}
+        await this.postRepo.createComment(data);
+    };
 }

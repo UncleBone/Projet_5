@@ -1,3 +1,4 @@
+import { CreateCommentWithAuthor, CreatePostWithAuthor } from '@/dto/post.dto'
 import prisma from '@/lib/prisma'
 
 export class PostRepo {
@@ -23,9 +24,19 @@ export class PostRepo {
             include: {
                 users: true,
                 topics: true,
-                comments: true
+                comments: {
+                    include: { users: true }
+                }
             }
         })
         return posts
+    }
+
+    async create(data: CreatePostWithAuthor) {
+        await prisma.posts.create({ data });
+    }
+
+    async createComment(data: CreateCommentWithAuthor) {
+        await prisma.comments.create({ data });
     }
 }

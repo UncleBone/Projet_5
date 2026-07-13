@@ -12,8 +12,8 @@ export const Profile = () => {
     const router = useRouter();
     const [isAuth,setIsAuth] = useState<boolean>(false);
     const [user,setUser] = useState<AuthResponse | null>(null);
-    const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
+    const [updateError, setUpdateError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [formData, setFormData] = useState<CreateUserDTO>({
         username: '',
@@ -21,6 +21,7 @@ export const Profile = () => {
         password: '',
     });
     const [topics, setTopics] = useState<TopicDTO[]>([]);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     useEffect(() => {
         const auth = authClientService.isAuthenticated();
@@ -60,6 +61,7 @@ export const Profile = () => {
     },[user])
     
     const handleChange = (e: ChangeEvent & {target: HTMLInputElement}): void => {
+        setUpdateError('');
         setFormData({
         ...formData,
         [e.target.name]: e.target.value,
@@ -67,19 +69,53 @@ export const Profile = () => {
     };
 
     const handleSubmit = async (e: SubmitEvent): Promise<void> => {
+        if(!user) return
         e.preventDefault();
         setError('');
         setLoading(true);
 
         try {
-            // await authService.register(formData);
-            router.push('/home');
+            const result = await fetch('/api/user', {
+                method: "PUT",
+                headers: {
+                    'Authorization': `Bearer ${user.token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData)
+            })
+            if (!result.ok) {
+                const errorData = await result.json().catch(() => null);
+                const message = errorData.message;
+                throw new Error(message);
+            }else{
+                const data = await result.json();
+                authClientService.login(data);
+                setShowSuccess(true);
+            }
         } catch (err: any) {
-            setError(err.response.message || 'Registration failed');
+            setUpdateError(err.message || 'Update failed');
         } finally {
             setLoading(false);
         }
     };
+
+    const handleClick = (t_id: number) => async () => {
+        if (!user) return;
+        try{
+            const result = await fetch('/api/user/subscriptions/'+t_id, {
+                method: "DELETE",
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            })
+            if(result.ok){
+                const newTopics = topics.filter(topic => topic.id !== t_id);
+                setTopics(newTopics);
+            }
+        }catch(error: any){
+            setError(error.message || "Erreur serveur")
+        }
+    }
 
     if(loading){
         return (
@@ -101,15 +137,25 @@ export const Profile = () => {
 
     return (
         <div className={styles.container}>
+            {showSuccess && (
+            <div className={styles.popup}>
+                <div className={styles.popupContent}>
+                    <p>Mise à jour réussie !</p>
+                    <button 
+                    onClick={() => setShowSuccess(false)}
+                    className="button" >Fermer</button>
+                </div>
+            </div>
+            )}
             <div className={styles.formContainer}>
 
-                <h2 className={styles.title}>
+                <h2 className="title_2">
                     Profil utilisateur
                 </h2>
 
-                {error ? (
+                {updateError ? (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" data-cy="register_error">
-                    {error}
+                    {updateError}
                 </div>
                 ) : null}
 
@@ -163,13 +209,19 @@ export const Profile = () => {
             </div>
             <hr className={styles.hr} />
             <div className={styles.container}>
-                <h2 className={styles.title}>
+                <h2 className="title_2">
                     Abonnements
                 </h2>
 
                 <div className={styles.subscriptionsContainer}>
                 {topics.map((topic) =>
-                    <Topic key={topic.id} title={topic.name} description={topic.description} subscribed={true} profile={true} />
+                    <Topic 
+                    key={topic.id} 
+                    title={topic.name} 
+                    description={topic.description} 
+                    subscribed={true} 
+                    profile={true} 
+                    handleClick={handleClick(topic.id)}/>
                 )}
                 </div>
             </div>

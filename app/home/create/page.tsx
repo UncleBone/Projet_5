@@ -12,10 +12,17 @@ import { TopicDTO } from "@/dto/topic.dto";
 export const Create = () => {
     const router = useRouter();
     const [error, setError] = useState<string>('');
+    const [createError, setCreateError] = useState<string>('');
     const [isAuth, setIsAuth] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [user,setUser] = useState<AuthResponse | null>(null);
     const [topics,setTopics] = useState<TopicDTO[]>([]);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [formData, setFormData] = useState<CreatePostDTO>({
+        topic: '',
+        title: '',
+        text: '',
+    });
 
     useEffect(() => {
         const auth = authClientService.isAuthenticated();
@@ -33,11 +40,7 @@ export const Create = () => {
     }, [router]);
 
 
-    const [formData, setFormData] = useState<CreatePostDTO>({
-        topic: '',
-        title: '',
-        text: '',
-    });
+    
 
     useEffect(() => {
         if(!user) return
@@ -56,7 +59,7 @@ export const Create = () => {
         }
     }, [user]);
 
-    const handleChange = (e: ChangeEvent & {target: HTMLInputElement}): void => {
+    const handleChange = (e: ChangeEvent & {target: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement}): void => {
         setFormData({
         ...formData,
         [e.target.name]: e.target.value,
@@ -64,18 +67,32 @@ export const Create = () => {
     };
 
     const handleSubmit = async (e: SubmitEvent): Promise<void> => {
+        if(!user) return
         e.preventDefault();
         setError('');
         setLoading(true);
 
-        // try {
-        //     // await authService.register(formData);
-        //     router.push('/home');
-        // } catch (err: any) {
-        //     setError(err.response.message || 'Registration failed');
-        // } finally {
-        //     setLoading(false);
-        // }
+        try {
+            const result = await fetch('/api/posts', {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${user.token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData)
+            })
+            if (!result.ok) {
+                const errorData = await result.json().catch(() => null);
+                const message = errorData.message;
+                throw new Error(message);
+            }else{
+                setShowSuccess(true);
+            }
+        } catch (err: any) {
+            setCreateError(err.message || 'Creation failed');
+        } finally {
+            setLoading(false);
+        }
     };
 
     if(loading){
@@ -98,15 +115,25 @@ export const Create = () => {
 
     return (
         <div className={styles.container}>
+            {showSuccess && (
+            <div className={styles.popup}>
+                <div className={styles.popupContent}>
+                    <p>Article créé !</p>
+                    <button 
+                    onClick={() => setShowSuccess(false)}
+                    className="button" >Fermer</button>
+                </div>
+            </div>
+            )}
             <Back url='/home' />
 
-            <h2 className={styles.title}>
+            <h2 className="title_2">
                 Créer un nouvel article
             </h2>
 
-            {error ? (
+            {createError ? (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" data-cy="error">
-                {error}
+                {createError}
             </div>
             ) : null}
 
@@ -115,7 +142,7 @@ export const Create = () => {
                     name="topic"
                     value={formData.topic}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 cursor-pointer"
                 >
                         <option value='' key={0} >Sélectionnez un thème</option>
                     {topics.map((t) => (
@@ -124,6 +151,7 @@ export const Create = () => {
                 </select>
 
                 <input
+                name="title"
                 value={formData.title}
                 placeholder="Titre de l'article"
                 onChange={handleChange}
@@ -131,6 +159,7 @@ export const Create = () => {
                 />
 
                 <textarea
+                name="text"
                 value={formData.text}
                 placeholder="Contenu de l'article"
                 onChange={handleChange}

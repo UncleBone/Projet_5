@@ -41,4 +41,26 @@ export class UserRepo {
         })
         return subs
     }
+
+    async addSubscription(userId: number, topicId: number) {
+        await prisma.subscriptions.create({
+            data: { user_id: userId, topic_id: topicId }
+        })
+    }
+
+    async removeSubscription(userId: number, topicId: number) {
+        await prisma.subscriptions.delete({
+            where: {
+                topic_id_user_id: { user_id: userId, topic_id: topicId }
+            }
+        })
+    }
+
+    async updateUser(userId: number,data: CreateUserDTO) {
+        const user = await prisma.users.update({ 
+            where: { id: userId},
+            data 
+        });
+        return user
+    }
 }

@@ -1,5 +1,5 @@
-.container {
-    /* padding: 20px 100px; */
+.mainContainer {
+    padding: 20px 100px;
 }
 .title {
     font-size: large;
@@ -40,8 +40,8 @@
 }
 
 @media (max-width: 768px) {
-    .container {
-        /* padding: 20px; */
+    .mainContainer {
+        padding: 20px;
     }
     .title {
         margin-left: 80px;

@@ -64,6 +64,24 @@ export const Topics = () => {
     fetchData();
   }, [user]);
 
+  const handleClick = (t_id: number) => async () => {
+    if (!user) return;
+    try{
+      const result = await fetch('/api/user/subscriptions/'+t_id, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        }
+      })
+      if(result.ok){
+        let newSubs = [...subs,t_id];
+        setSubs(newSubs);
+      }
+    }catch(error: any){
+      setError(error.message || "Erreur serveur")
+    }
+  }
+
   if(loading){
     return (
     <div className={styles.errorContainer}>
@@ -85,7 +103,13 @@ export const Topics = () => {
   return (
     <div className={styles.container}>
       {topics.map((topic) => 
-        <Topic key={topic.id} title={topic.name} description={topic.description} subscribed={subs.includes(topic.id)} profile={false} />
+        <Topic 
+        key={topic.id} 
+        title={topic.name} 
+        description={topic.description} 
+        subscribed={subs.includes(topic.id)} 
+        profile={false} 
+        handleClick={handleClick(topic.id)}/>
       )}
     </div>
   );

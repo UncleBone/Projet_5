@@ -1,35 +1,11 @@
-import { UserController } from '@/controller/user.controller';
+import { PostController } from '@/controller/post.controller'
 import { verifyToken } from '@/lib/jwt';
 import { NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 
-const controller = new UserController;
+const controller = new PostController;
 
-export async function GET(req: Request) {
-    try {
-        const authHeader = req.headers.get('authorization') || '';
-        if (!authHeader.startsWith('Bearer ')) {
-            return new Response(JSON.stringify({ message: 'Token manquant' }), { status: 401 });
-        }
-
-        const token = authHeader.split(' ')[1];
-        const decoded = verifyToken(token);
-        if (!decoded) {
-            return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
-        }
-
-        const user = await controller.getUserInfo(decoded.id); 
-
-        return new Response(JSON.stringify(user), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    } catch (err) {
-        return new Response(JSON.stringify({ message: 'Erreur serveur' }), { status: 500 });
-    }
-}
-
-export async function PUT(req: Request) {
+export async function POST(req: Request) {
     try {
         const authHeader = req.headers.get('authorization') || '';
         if (!authHeader.startsWith('Bearer ')) {
@@ -43,10 +19,10 @@ export async function PUT(req: Request) {
         }
 
         const data = await req.json();
-        const result = await controller.update(decoded.id,data);
+        await controller.addComment(decoded.id,data);
 
-        return NextResponse.json(result, {
-            status: 200,
+        return NextResponse.json(null, {
+            status: 201,
             headers: { 'Content-Type': 'application/json' }
         });
     } catch (error: any) {
@@ -55,7 +31,7 @@ export async function PUT(req: Request) {
                 field: e.path.join('.'),
                 message: e.message
             }));
-            return new Response(JSON.stringify(errors[0]), {
+            return NextResponse.json(errors[0], {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' }
             });

@@ -68,7 +68,7 @@ export const Register = () => {
                 className={styles.logo}
             />
 
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-8" data-cy="title">
+            <h2 className="title" data-cy="title">
                 Inscription
             </h2>
 
@@ -129,7 +129,7 @@ export const Register = () => {
                 data-cy="submit"
                 type="submit"
                 disabled={loading}
-                className="items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                className="button"
             >
                 {loading ? 'Inscription en cours...' : 'S\'inscrire'}
             </button>

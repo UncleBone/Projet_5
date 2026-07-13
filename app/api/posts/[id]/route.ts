@@ -5,7 +5,7 @@ import { verifyToken } from '@/lib/jwt';
 const controller = new PostController();
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const id = params.id;
+  const { id } = await params;
   try {
     const authHeader = req.headers.get('authorization') || '';
     if (!authHeader.startsWith('Bearer ')) {
@@ -18,6 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
     }
     const post = await controller.getById(Number(id));
+    console.log("route post id",id,post)
     if (!post) {
       return NextResponse.json({ message: 'Post non trouvé' }, { status: 404 });
     }
