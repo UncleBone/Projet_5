@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-export async function withErrorHandling(handler: (req: Request) => Promise<Response>) {
+export function withErrorHandling(handler: (req: Request) => Promise<Response>) {
     return async function(req: Request) {
         try {
             return await handler(req)

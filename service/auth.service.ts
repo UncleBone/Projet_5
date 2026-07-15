@@ -1,4 +1,4 @@
-import { LoginUserDTO, AuthResponse, UserDTO, RegisterDTO, RegisterSchema } from "@/dto/user.dto";
+import { LoginUserDTO, AuthResponse, RegisterDTO, RegisterSchema } from "@/dto/user.dto";
 import { UserRepo } from "@/repository/user.repo";
 import * as bcrypt from 'bcrypt'
 import { generateToken } from "@/lib/jwt";
@@ -51,18 +51,5 @@ export class AuthService {
         const response = {...newUser, token: token };
         
         return response
-    };
-
-    // updateCurrentUser: (updates: Partial<AuthResponse>): AuthResponse | null => {
-    //     const userStr = localStorage.getItem('user');
-    //     if (!userStr) {
-    //     return null;
-    //     }
-    //     const existing = JSON.parse(userStr);
-    //     const nextUser = { ...existing, ...updates };
-    //     localStorage.setItem('user', JSON.stringify(nextUser));
-    //     return nextUser;
-    // },
-
-    
+    };    
 }

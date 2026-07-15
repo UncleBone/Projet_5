@@ -12,7 +12,6 @@ export function verifyToken(token: string): any {
     const result = jwt.verify(token, JWT_SECRET);
     return result
   } catch (error) {
-    console.error("verify error",error)
     return null;
   }
 }

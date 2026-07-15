@@ -1,8 +1,6 @@
-import db from '@/data/mockDB'
 import { CreateCommentDTO, CreateCommentSchema, CreatePostDTO, CreatePostSchema } from '@/dto/post.dto';
 import { AuthResponse } from '@/dto/user.dto';
 import { PostRepo } from '@/repository/post.repo';
-import { NextResponse } from 'next/server'
 
 
 export class PostService {
