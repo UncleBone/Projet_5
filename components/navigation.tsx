@@ -42,54 +42,58 @@ export default function Navigation() {
         {/* Bouton burger pour mobile */}
         {(pathname !== '/login' && pathname !== '/register') ? (
             <div>
-            <div className={isOpen ? styles.overlay : styles.hide } onClick={closeMenu}></div>
-            <div>
-                <button 
-                    className={isOpen ? styles.hide : styles.burger }
-                    onClick={openMenu}
-                    aria-label="Menu"
-                >
-                    <span className={isOpen ? styles.burgerOpen : ''}></span>
-                    <span className={isOpen ? styles.burgerOpen : ''}></span>
-                    <span className={isOpen ? styles.burgerOpen : ''}></span>
-                </button>
+                <div 
+                    id="overlay"
+                    className={isOpen ? styles.overlay : styles.hide } 
+                    onClick={closeMenu}>
+                </div>
+                <div>
+                    <button 
+                        className={isOpen ? styles.hide : styles.burger }
+                        onClick={openMenu}
+                        aria-label="Menu"
+                    >
+                        <span className={isOpen ? styles.burgerOpen : ''}></span>
+                        <span className={isOpen ? styles.burgerOpen : ''}></span>
+                        <span className={isOpen ? styles.burgerOpen : ''}></span>
+                    </button>
 
 
-                <ul className={`${styles.menu} ${isOpen ? styles.menuOpen : ''}`}>
-                    <li className={styles.logout} onClick={logout}>Se déconnecter</li>
-                    <li>
-                        <Link 
-                            href="/home" 
-                            className={pathname === '/home' ? `${styles.link} ${styles.active}` : styles.link}
+                    <ul className={`${styles.menu} ${isOpen ? styles.menuOpen : ''}`}>
+                        <li className={styles.logout} onClick={logout}>Se déconnecter</li>
+                        <li>
+                            <Link 
+                                href="/home" 
+                                className={pathname === '/home' ? `${styles.link} ${styles.active}` : styles.link}
+                                >
+                                Articles
+                            </Link>
+                        </li>
+                        <li>
+                            <Link 
+                                href="/topics" 
+                                className={pathname === '/topics' ? `${styles.link} ${styles.active}` : styles.link}
                             >
-                            Articles
-                        </Link>
-                    </li>
-                    <li>
-                        <Link 
-                            href="/topics" 
-                            className={pathname === '/topics' ? `${styles.link} ${styles.active}` : styles.link}
-                        >
-                            Thèmes
-                        </Link>
-                    </li>
-                    <li>
-                        <Link 
-                            href="/profile" 
-                            className={styles.userIcon}
-                            >
-                            <Image
-                                src={pathname === '/profile' ? "/images/userIcon_active.png" : "/images/userIcon.png"}
-                                alt="profil"
-                                width={32}
-                                height={32}
-                                className={styles.profile}
-                            />
-                        </Link>
-                    </li>
-                </ul>
+                                Thèmes
+                            </Link>
+                        </li>
+                        <li>
+                            <Link 
+                                href="/profile" 
+                                className={styles.userIcon}
+                                >
+                                <Image
+                                    src={pathname === '/profile' ? "/images/userIcon_active.png" : "/images/userIcon.png"}
+                                    alt="profil"
+                                    width={32}
+                                    height={32}
+                                    className={styles.profile}
+                                />
+                            </Link>
+                        </li>
+                    </ul>
                 </div>
-                </div>
+            </div>
             ) : null }
      </div>
    </nav>

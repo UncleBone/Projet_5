@@ -29,6 +29,7 @@ export default function FullPostComponent({ post_id }: { post_id: number }) {
             const currentUser = authClientService.getCurrentUser();
             if (!currentUser){ 
                 setError("Utilisateur inconnu");
+                setLoading(false);
             }else{ 
                 setUser(currentUser);
             }
@@ -39,19 +40,18 @@ export default function FullPostComponent({ post_id }: { post_id: number }) {
         fetchPost();
     }, [user]);
 
-    const fetchPost = () => {
+    const fetchPost = async () => {
         if (!user) return;
         try {
-            fetch('/api/posts/'+post_id, {
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                },
-            })
-            .then(res => res.json())
-            .then(setPost)
-            .then(() => setLoading(false));
+            const res = await fetch('/api/posts/' + post_id, {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            if (!res.ok) throw new Error('Erreur réseau');
+            const data = await res.json();
+            setPost(data);
         } catch {
             setError("Erreur lors du chargement de l'article");
+        }finally{
             setLoading(false);
         }
     };
