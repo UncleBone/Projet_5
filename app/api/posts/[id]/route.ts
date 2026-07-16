@@ -1,19 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PostController } from '@/controller/post.controller';
-import { verifyToken } from '@/lib/jwt';
+import { authenticate } from '@/lib/authenticate';
 
 const controller = new PostController();
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const { id } = await params;
   try {
-    const authHeader = req.headers.get('authorization') || '';
-    if (!authHeader.startsWith('Bearer ')) {
-        return new Response(JSON.stringify({ message: 'Token manquant' }), { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token);
+    const decoded = authenticate(req);
     if (!decoded) {
         return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
     }

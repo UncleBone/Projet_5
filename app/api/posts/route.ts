@@ -1,21 +1,13 @@
 import { PostController } from '@/controller/post.controller'
+import { authenticate } from '@/lib/authenticate';
 import { withErrorHandling } from '@/lib/errorHandler';
-import { verifyToken } from '@/lib/jwt';
 import { NextResponse } from 'next/server';
 
 const controller = new PostController;
 
 async function getHandler(req: Request) {
-    const authHeader = req.headers.get('authorization') || '';
-    if (!authHeader.startsWith('Bearer ')) {
-        return new Response(JSON.stringify({ message: 'Token manquant' }), { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token);
-    if (!decoded) {
-        return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
-    }
+    const decoded = authenticate(req);
+    if(!decoded) return new Response(JSON.stringify({ message: 'Authentification requise' }), { status: 401 });
 
     const posts = await controller.getAll(decoded); 
 
@@ -27,16 +19,8 @@ async function getHandler(req: Request) {
 export const GET = withErrorHandling(getHandler);
 
 async function postHandler(req: Request) {
-    const authHeader = req.headers.get('authorization') || '';
-    if (!authHeader.startsWith('Bearer ')) {
-        return new Response(JSON.stringify({ message: 'Token manquant' }), { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token);
-    if (!decoded) {
-        return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
-    }
+    const decoded = authenticate(req);
+    if(!decoded) return new Response(JSON.stringify({ message: 'Authentification requise' }), { status: 401 });
 
     const data = await req.json();
     const result = await controller.create(decoded.id,data);

@@ -1,17 +1,11 @@
 import { UserController } from '@/controller/user.controller';
+import { authenticate } from '@/lib/authenticate';
 import { withErrorHandling } from '@/lib/errorHandler';
-import { verifyToken } from '@/lib/jwt';
 
 const controller = new UserController;
 
 async function getHandler(req: Request) {
-    const authHeader = req.headers.get('authorization') || '';
-    if (!authHeader.startsWith('Bearer ')) {
-        return new Response(JSON.stringify({ message: 'Token manquant' }), { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token);
+    const decoded = authenticate(req);
     if (!decoded) {
         return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
     }
