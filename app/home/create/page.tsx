@@ -44,19 +44,37 @@ export const Create = () => {
 
     useEffect(() => {
         if(!user) return
-        try {
-            fetch('/api/topics', {
+        const loadTopics = async () => {
+            try {
+            const res = await fetch('/api/topics', {
                 headers: {
                     'Authorization': `Bearer ${user.token}`
                 }
-            })
-            .then(res => res.json())
-            .then(setTopics)
-            setLoading(false);
-        } catch {
-            setError('Erreur lors du chargement des articles');
-            setLoading(false);
-        }
+            });
+            if (!res.ok) throw new Error('Erreur lors du chargement des thèmes');
+            const data = await res.json();
+            setTopics(data);
+            } catch(error: any) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadTopics();
+        // try {
+        //     fetch('/api/topics', {
+        //         headers: {
+        //             'Authorization': `Bearer ${user.token}`
+        //         }
+        //     })
+        //     .then(res => res.json())
+        //     .then(setTopics)
+        //     setLoading(false);
+        // } catch {
+        //     setError('Erreur lors du chargement des articles');
+        //     setLoading(false);
+        // }
     }, [user]);
 
     const handleChange = (e: ChangeEvent & {target: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement}): void => {

@@ -28,7 +28,7 @@ export const Login = () => {
             })
             if (!result.ok) {
                 const errorData = await result.json().catch(() => null);
-                const message = errorData.message;
+                const message = errorData?.message || 'Login failed';
                 throw new Error(message);
             }else{
                 const data = await result.json();

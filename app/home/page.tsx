@@ -35,19 +35,24 @@ export const Home = () => {
 
     useEffect(() => {
         if (!user) return;
-        try {
-            fetch('/api/posts', {
+        const loadPosts = async () => {
+            try {
+            const res = await fetch('/api/posts', {
                 headers: {
-                    'Authorization': `Bearer ${user.token}`
+                'Authorization': `Bearer ${user.token}`
                 }
-            })
-            .then(res => res.json())
-            .then(setPosts)
-            setLoading(false);
-        } catch {
-            setError('Erreur lors du chargement des articles');
-            setLoading(false);
-        }
+            });
+            if (!res.ok) throw new Error('Erreur lors du chargement des article');
+            const data = await res.json();
+            setPosts(data);
+            } catch(error: any) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPosts();
     }, [user]);
 
     const sortFunction = (a: PostDTO,b: PostDTO) => {

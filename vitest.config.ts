@@ -8,5 +8,8 @@ export default defineConfig({
     environment: 'jsdom', 
     globals: true,
     setupFiles: './test/setup.js',
+    coverage: {
+      exclude: ['*.css','dto/**'],
+    },
   }
 })
