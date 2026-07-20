@@ -7,11 +7,11 @@ const controller = new PostController;
 
 async function getHandler(req: Request) {
     const decoded = authenticate(req);
-    if(!decoded) return new Response(JSON.stringify({ message: 'Authentification requise' }), { status: 401 });
+    if(!decoded) return NextResponse.json({ message: 'Authentification requise' }, { status: 401 });
 
     const posts = await controller.getAll(decoded); 
 
-    return new Response(JSON.stringify(posts), {
+    return NextResponse.json(posts, {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
     });
@@ -20,7 +20,7 @@ export const GET = withErrorHandling(getHandler);
 
 async function postHandler(req: Request) {
     const decoded = authenticate(req);
-    if(!decoded) return new Response(JSON.stringify({ message: 'Authentification requise' }), { status: 401 });
+    if(!decoded) return NextResponse.json({ message: 'Authentification requise' }, { status: 401 });
 
     const data = await req.json();
     const result = await controller.create(decoded.id,data);

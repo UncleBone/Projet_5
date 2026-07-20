@@ -9,7 +9,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   try {
     const decoded = authenticate(req);
     if (!decoded) {
-        return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
+        return NextResponse.json({ message: 'Token invalide' }, { status: 401 });
     }
     const post = await controller.getById(Number(id));
     if (!post) {

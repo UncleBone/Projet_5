@@ -1,7 +1,6 @@
 import { TopicController } from '@/controller/topic.controller';
 import { authenticate } from '@/lib/authenticate';
 import { withErrorHandling } from '@/lib/errorHandler';
-import { verifyToken } from '@/lib/jwt';
 
 const controller = new TopicController;
 

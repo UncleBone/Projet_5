@@ -9,7 +9,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   try {
     const decoded = authenticate(req);
     if (!decoded) {
-        return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
+        return NextResponse.json({ message: 'Token invalide' }, { status: 401 });
     }
     await controller.addSubscription(decoded.id,Number(id));
     
@@ -27,7 +27,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   try {
     const decoded = authenticate(req);
     if (!decoded) {
-        return new Response(JSON.stringify({ message: 'Token invalide' }), { status: 401 });
+        return NextResponse.json({ message: 'Token invalide' }, { status: 401 });
     }
     await controller.removeSubscription(decoded.id,Number(id));
     
