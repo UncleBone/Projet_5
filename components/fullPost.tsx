@@ -149,6 +149,7 @@ export default function FullPostComponent({ post_id }: { post_id: number }) {
                 placeholder='Écrivez ici votre commentaire'
                 onChange={handleChange}
                 rows={4}
+                data-testid="comment_input"
                 ></textarea>
                 <button
                     type="submit"

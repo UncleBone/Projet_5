@@ -39,9 +39,6 @@ export const Create = () => {
         }
     }, [router]);
 
-
-    
-
     useEffect(() => {
         if(!user) return
         const loadTopics = async () => {
@@ -62,19 +59,7 @@ export const Create = () => {
         };
 
         loadTopics();
-        // try {
-        //     fetch('/api/topics', {
-        //         headers: {
-        //             'Authorization': `Bearer ${user.token}`
-        //         }
-        //     })
-        //     .then(res => res.json())
-        //     .then(setTopics)
-        //     setLoading(false);
-        // } catch {
-        //     setError('Erreur lors du chargement des articles');
-        //     setLoading(false);
-        // }
+
     }, [user]);
 
     const handleChange = (e: ChangeEvent & {target: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement}): void => {
@@ -157,6 +142,7 @@ export const Create = () => {
 
             <form onSubmit={handleSubmit} className={styles.form}>
                 <select
+                    data-testid="select_topic"
                     name="topic"
                     value={formData.topic}
                     onChange={handleChange}

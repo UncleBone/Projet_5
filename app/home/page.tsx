@@ -20,6 +20,7 @@ export const Home = () => {
 
     useEffect(() => {
         const auth = authClientService.isAuthenticated();
+        console.log('auth',auth)
         setIsAuth(auth);
         if (!auth) router.push('/');
         else {

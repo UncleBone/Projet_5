@@ -4,7 +4,6 @@ import { useState, SubmitEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Back from "@/components/back";
 import Image from 'next/image'
-import styles from './page.module.css'
 import { CreateUserDTO } from "@/dto/user.dto";
 import { authClientService } from "@/service/auth.client.service";
 
