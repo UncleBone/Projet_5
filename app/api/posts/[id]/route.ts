@@ -4,7 +4,7 @@ import { authenticate } from '@/lib/authenticate';
 
 const controller = new PostController();
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     const decoded = authenticate(req);
