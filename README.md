@@ -12,29 +12,22 @@ MDD (Monde de Dév) est une plateforme permettant aux développeurs de s'abonner
 
 - Node.js 22+
 - npm ou yarn
-- PostgreSQL
+- MySQL
 
 ### Installation
 
 ```bash
-git clone <repository-url>
-cd P5-DFSJS
+git clone https://github.com/UncleBone/Projet_5.git
+cd DFSJS-Prenez-en-charge-le-d-veloppement-d-une-application-full-stack-JavaScript-compl-te
 npm install
 ```
 
-### Base de données (Docker)
+### Base de données
 
-Lancer une instance PostgreSQL en local avec Docker :
-
-```bash
-docker run --name mdd-postgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=mdd_db -p 5432:5432 -d postgres:17
-```
-
-Pour arrêter / relancer le conteneur :
+Créer la base de données MySQL :
 
 ```bash
-docker stop mdd-postgres
-docker start mdd-postgres
+mysql -u root -p < schema.sql
 ```
 
 ### Configuration
@@ -44,13 +37,7 @@ docker start mdd-postgres
 cp .env.example .env
 ```
 
-2. Les variables par défaut dans `.env` correspondent au conteneur Docker ci-dessus :
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/mdd_db?schema=public"
-AUTH_SECRET="your-secret-key-here-change-in-production"
-AUTH_URL="http://localhost:3000"
-```
-
+2. Renseigner les identifiants de connection dans .env
 3. Initialiser la base de données :
 ```bash
 npx prisma generate
@@ -70,7 +57,7 @@ L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
 - **Framework**: Next.js 16 (App Router)
 - **Langage**: TypeScript 5
 - **UI**: shadcn/ui + Tailwind CSS 4
-- **Base de données**: PostgreSQL
+- **Base de données**: MySQL
 - **ORM**: Prisma
 - **Validation**: Zod
 
@@ -86,26 +73,86 @@ L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
 ## Project Structure
 
 ```
-P5-DFSJS/
-├── app/               # App Router (Next.js 16)
+DFSJS.../
+├── app/               		# App Router
 │   ├── layout.tsx
-│   └── page.tsx
-├── components/        # Composants UI (shadcn/ui)
-│   └── ui/
-├── lib/               # Utilitaires
-│   └── utils.ts
-├── prisma/            # Database schema
-│   └── schema.prisma
-├── public/            # Static files
+│   ├── page.tsx
+│   ├── global.css
+│   ├── not-found.tsx
+│   ├── login/page.tsx
+│   ├── register/page.tsx
+│   ├── home/
+│   │    ├── page.tsx
+│   │    ├── create/page.tsx
+│   │    └── [slug]/page.tsx
+│   ├── topics/page.tsx
+│   ├── profile/page.tsx
+│   └── api/				# Routes API			   
+│        ├── auth/
+│        │    ├── register/route.ts
+│        │    └── login/route.ts
+│        ├── posts/
+│        │    ├── route.ts
+│        │    └── [id]
+│        │    		├── route.ts
+│        │    		└── comment/route.ts
+│        ├── topics/route.ts
+│        └── user/
+│             ├── route.ts
+│             └── subscriptions
+│             		├── route.ts
+│             		└── [id]/route.ts
+├── components/           	# Composants UI
+│    ├── navigation.tsx
+│    ├── back.tsx
+│    ├── post.tsx
+│    ├── fullPost.tsx
+│    ├── comment.tsx
+│    └── topic.tsx
+├── lib/               		# Utilitaires
+│    ├── authenticate.ts
+│    ├── errorHandler.ts
+│    ├── jwt.ts
+│    ├── prisma.ts
+│    └── utils.ts
+├── dto/ 					# Data Transfer Objects & Types
+│    ├── post.dto.ts
+│    ├── topic.dto.ts
+│    └── user.dto.ts
+├── prisma/            		# Schéma de la base de données
+│    └── schema.prisma
+├── public/	  		  		# Assets statiques
+├── controller/				# Logique de contrôle
+│    ├── auth.controller.ts
+│    ├── post.controller.ts
+│    ├── topic.controller.ts
+│    └── user.controller.ts        
+├── service/ 					# Logique métier
+│    ├── auth.client.service.ts
+│    ├── auth.service.ts
+│    ├── post.service.ts
+│    ├── topic.service.ts
+│    └── user.service.ts 
+├── repository/ 				# Accès à la base de données (Prisma)
+│    ├── auth.repository.ts
+│    ├── post.repository.ts
+│    ├── topic.repository.ts
+│    └── user.repository.ts 
+├── test/setup.js				# setup vitest
+├── e2e/  						# tests e2e et rapports de tests
+├── lighthouse.report.html		# rapport lighthouse
 └── package.json
 ```
 
-## Documentation
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Prisma Documentation](https://www.prisma.io/docs)
-- [shadcn/ui Documentation](https://ui.shadcn.com)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs)
+## Testing
+- Lancement des tests vitest (unitaires, intégration et api) avec rapport de couverture :
+```bash
+	npm run test:coverage
+```
+- lancement des tests e2e avec rapport textuel :
+```bash
+	npx playwright test > e2e/report.txt
+```
 
 ## License
 
