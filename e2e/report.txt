@@ -1,0 +1,46 @@
+
+Running 36 tests using 2 workers
+
+  ✓   2 [chromium] › e2e/test1_register.spec.js:10:5 › landing page show login and register buttons (604ms)
+  ✓   1 [chromium] › e2e/test1_register.spec.js:16:5 › click register button (1.1s)
+  ✓   3 [chromium] › e2e/test1_register.spec.js:24:5 › show error if wrong format (806ms)
+  ✓   4 [chromium] › e2e/test1_register.spec.js:48:5 › register and redirect to home page (1.0s)
+  ✓   5 [chromium] › e2e/test2_login_logout.spec.js:10:5 › click login button (1.0s)
+  ✓   6 [chromium] › e2e/test2_login_logout.spec.js:18:5 › show error if wrong credentials (770ms)
+  ✓   7 [chromium] › e2e/test2_login_logout.spec.js:47:5 › login and redirect to home page (1.0s)
+  ✓   8 [chromium] › e2e/test2_login_logout.spec.js:85:5 › logout and redirect to landing page (1.0s)
+  ✓   9 [chromium] › e2e/test3_home_post_comment.spec.js:28:5 › home page (869ms)
+  ✓  10 [chromium] › e2e/test3_home_post_comment.spec.js:51:5 › post detail (1.1s)
+  ✓  11 [chromium] › e2e/test3_home_post_comment.spec.js:75:5 › add comment (1.0s)
+  ✓  13 [chromium] › e2e/test4_create.spec.js:43:5 › create new post (871ms)
+  ✓  12 [chromium] › e2e/test4_create.spec.js:25:5 › home create button (1.3s)
+  ✓  14 [chromium] › e2e/test5_topics.spec.js:24:5 › topics link (948ms)
+  ✓  15 [chromium] › e2e/test5_topics.spec.js:60:5 › subscribe buttons (1.1s)
+  ✓  16 [chromium] › e2e/test6_profile.spec.js:30:5 › profile link (1.0s)
+  ✓  17 [chromium] › e2e/test6_profile.spec.js:56:5 › update profile (851ms)
+  ✓  18 [chromium] › e2e/test6_profile.spec.js:89:5 › unsubscribe (1.0s)
+  ✓  19 [firefox] › e2e/test1_register.spec.js:10:5 › landing page show login and register buttons (1.7s)
+  ✓  21 [firefox] › e2e/test1_register.spec.js:24:5 › show error if wrong format (1.6s)
+  ✓  20 [firefox] › e2e/test1_register.spec.js:16:5 › click register button (2.5s)
+  ✓  23 [firefox] › e2e/test2_login_logout.spec.js:10:5 › click login button (1.2s)
+  ✓  22 [firefox] › e2e/test1_register.spec.js:48:5 › register and redirect to home page (1.6s)
+  ✓  24 [firefox] › e2e/test2_login_logout.spec.js:18:5 › show error if wrong credentials (1.7s)
+  ✓  25 [firefox] › e2e/test2_login_logout.spec.js:47:5 › login and redirect to home page (1.5s)
+  ✓  26 [firefox] › e2e/test2_login_logout.spec.js:85:5 › logout and redirect to landing page (1.3s)
+  ✓  27 [firefox] › e2e/test3_home_post_comment.spec.js:28:5 › home page (1.2s)
+  ✓  28 [firefox] › e2e/test3_home_post_comment.spec.js:51:5 › post detail (2.0s)
+  ✓  29 [firefox] › e2e/test3_home_post_comment.spec.js:75:5 › add comment (1.9s)
+  ✓  31 [firefox] › e2e/test4_create.spec.js:43:5 › create new post (1.7s)
+  ✓  30 [firefox] › e2e/test4_create.spec.js:25:5 › home create button (1.9s)
+  ✓  32 [firefox] › e2e/test5_topics.spec.js:24:5 › topics link (1.7s)
+  ✓  33 [firefox] › e2e/test5_topics.spec.js:60:5 › subscribe buttons (1.8s)
+  ✓  34 [firefox] › e2e/test6_profile.spec.js:30:5 › profile link (1.8s)
+  ✓  35 [firefox] › e2e/test6_profile.spec.js:56:5 › update profile (1.7s)
+  ✓  36 [firefox] › e2e/test6_profile.spec.js:89:5 › unsubscribe (3.6s)
+
+  36 passed (52.1s)
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report e2e/playwright-report[39m
+[36m[39m

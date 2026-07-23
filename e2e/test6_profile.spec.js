@@ -97,7 +97,7 @@ test("unsubscribe", async ({ page }) => {
     await page.goto('/profile');
 
     for(let topic of fakeTopics){
-        await expect(page.getByText(topic.name, { exact: false })).toBeVisible();
+        await expect(page.getByRole('heading', { name: topic.name, ignoreCase: true })).toBeVisible();
         await expect(page.getByText(topic.description, { exact: false })).toBeVisible();
     }
 
@@ -109,7 +109,7 @@ test("unsubscribe", async ({ page }) => {
             });
         });
         await button.click();
-        await expect(page.getByText(topic.name)).not.toBeVisible();
+        await expect(page.getByRole('heading', { name: topic.name, ignoreCase: true })).not.toBeVisible();
     }
 
 })

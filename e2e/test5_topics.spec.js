@@ -52,7 +52,7 @@ test("topics link", async ({ page }) => {
 
     await expect(page).toHaveURL('/topics');
     for(let topic of fakeTopics){
-        await expect(page.getByText(topic.name)).toBeVisible();
+        await expect(page.getByRole('heading', { name: topic.name, ignoreCase: true })).toBeVisible();
         await expect(page.getByText(topic.description)).toBeVisible();
     }
 })
